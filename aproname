@@ -9,6 +9,7 @@
 BEGIN {
   ENVIRON["LC_COLLATE"] = "C" # Effects of this are undefined in POSIX.
   FS = "/"
+  # array[pattern] = error message prefix
   len[156] = "Exceeds ustar prefix byte limit"
   len[100] = "Exceeds ustar filename byte limit"
   patt["[^0-9A-Za-z ._-]"] = "Contains non-portable character"
