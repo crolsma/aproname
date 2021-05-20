@@ -1,0 +1,16 @@
+Summary:
+  Detects problematic pathname patterns, accounting for both Unix-like OSes and
+  Microsoft Windows.  With this, nonportable pathnames can be detected and then
+  corrected.
+
+Usage:
+  aproname [files]
+
+  To test all pathnames in a directory tree:
+  find /path/to/directory | aproname
+
+  Or, if a list of pathnames is written to a file:
+  aproname /path/to/file
+
+Requirements:
+  POSIX sh, awk, and utilities
