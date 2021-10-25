@@ -6,7 +6,7 @@
 # 4) additional restrictions to avoid common usability problems.
 
 BEGIN {
-  ENVIRON["LC_COLLATE"] = "C" # Effects of this are undefined in POSIX.
+  ENVIRON["LC_COLLATE"] = "C" # Effects of this are implementation-defined.
   FS = "/"
   # array[pattern] = error message prefix
   len[156] = "Exceeds ustar prefix byte limit"
