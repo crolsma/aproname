@@ -1,18 +1,25 @@
-**Summary:**
-  Detects problematic pathname patterns, accounting for both Unix-like and Microsoft OSes.  With this, nonportable pathnames can be corrected before problems occur.
+= aproname
 
-**Usage:**
-  aproname [files]
+Detects problematic pathname patterns,
+accounting for both unix-like and Microsoft OSes.
+With this, nonportable pathnames can be corrected before problems occur.
 
-  To test all pathnames in a directory tree:
-  `find /path/to/directory | aproname`
+== Usage
 
-  Or, if a list of pathnames is written to a file:
-  `aproname /path/to/file`
-  
-  Alternatively, the script can be used interactively by providing no arguments.
-  
-  Regardless of usage style, the script returns exit code 1 if any problematic patterns are found.
+`aproname [file...]`
 
-**Requirements:**
-  POSIX awk, sh, and utilities
+To test all pathnames in a directory tree,
+assuming no embedded newlines:
+`find /path/to/directory | aproname`
+
+If a list of pathnames is written to a file:
+`aproname /path/to/file`
+
+The script can also be used interactively by providing no arguments.
+
+Regardless of usage style,
+the script returns exit code 1 if any problematic patterns are found.
+
+== Requirements
+
+POSIX awk, sh, and utilities.
