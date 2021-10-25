@@ -16,7 +16,6 @@ BEGIN {
   patt["^\.lock$|_vti_|^desktop\.ini$"] = "Restricted Microsoft OneDrive name"
   patt["^[ -]|[ .]$"] = "Invalid leading/trailing character"
   patt["^[^0-9A-Za-z]+$"] = "Only contains"
-  patt["  +"] = "Contains multiple adjacent spaces"
 }
 
 {
