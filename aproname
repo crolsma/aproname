@@ -1,7 +1,6 @@
 #!/bin/awk -f
 # Detects invalid pathname lengths and patterns based on restrictions from:
-# 1) POSIX Portable Filename Character Set, with an exception to allow space
-# characters,
+# 1) POSIX Portable Filename Character Set,
 # 2) ustar pathname length restrictions,
 # 3) MS-DOS and Microsoft Windows restrictions,
 # 4) additional restrictions to avoid common usability problems.
@@ -12,7 +11,7 @@ BEGIN {
   # array[pattern] = error message prefix
   len[156] = "Exceeds ustar prefix byte limit"
   len[100] = "Exceeds ustar filename byte limit"
-  patt["[^0-9A-Za-z ._-]"] = "Contains non-portable character"
+  patt["[^0-9A-Za-z._-]"] = "Contains non-portable character"
   patt["^(aux|con|nul|prn|(com|lpt)[0-9])(\..*)?$"] = "Reserved MS-DOS name"
   patt["^\.lock$|_vti_|^desktop\.ini$"] = "Restricted Microsoft OneDrive name"
   patt["^[ -]|[ .]$"] = "Invalid leading/trailing character"
