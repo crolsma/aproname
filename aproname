@@ -53,10 +53,10 @@ END {
   exit result
 }
 
-function bytes(str,  cmd, num) {
+function bytes(str, _cmd, _num) {
   gsub(/'/, 1, str)
-  cmd = "printf %s '" str "' | wc -c"
-  cmd | getline num
-  close(cmd)
-  return num
+  _cmd = "printf %s '" str "' | wc -c"
+  _cmd | getline _num
+  close(_cmd)
+  return _num
 }
