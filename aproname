@@ -12,9 +12,9 @@ BEGIN {
   len[156] = "Exceeds ustar prefix byte limit"
   len[100] = "Exceeds ustar filename byte limit"
   patt["[^0-9A-Za-z._-]"] = "Contains non-portable character"
-  patt["^(aux|con|nul|prn|(com|lpt)[0-9])(\..*)?$"] = "Reserved MS-DOS name"
-  patt["^\.lock$|_vti_|^desktop\.ini$"] = "Restricted Microsoft OneDrive name"
-  patt["^-|\.$"] = "Invalid leading/trailing character"
+  patt["^(aux|con|nul|prn|(com|lpt)[0-9])([.].*)?$"] = "Reserved MS-DOS name"
+  patt["^[.]lock$|_vti_|^desktop[.]ini$"] = "Restricted Microsoft OneDrive name"
+  patt["^-|[.]$"] = "Invalid leading/trailing character"
   patt["^[^0-9A-Za-z]+$"] = "Only contains"
 }
 
