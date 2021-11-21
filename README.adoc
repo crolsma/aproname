@@ -2,27 +2,40 @@
 
 Detects problematic pathname patterns,
 accounting for both unix-like and Microsoft OSes.
-With this, nonportable pathnames can be corrected before problems occur.
+
+Restrictions include:
+
+. POSIX Portable Filename Character Set,
+. ustar pathname length restrictions,
+. MS-DOS and Microsoft Windows restrictions,
+. additional restrictions to avoid common usability problems.
+
+Invalid pathnames are printed to STDOUT with a summary of problems.
 
 == Usage
 
 `aproname [file...]`
 
-To test all pathnames in a directory tree,
-assuming no embedded newlines:
-`find /path/to/directory | aproname`
+`aproname` expects input in one of two ways:
 
-If a list of pathnames is written to a file:
-`aproname /path/to/file`
+. from STDIN,
+. as arguments,
+  where each argument is treated as a file,
+  and where each file is expected to contain pathnames.
+  The pathname of the argument itself is not checked for invalid patterns.
 
-The script can also be used interactively by providing no arguments.
+To properly check the pathnames in a directory tree:
 
-Regardless of usage style,
-the script returns exit code 1 if any problematic patterns are found.
+`find path | aproname`
+
+`aproname` can not properly handle embedded newlines.
+Such a pathname will be incorrectly treated as two or more pathnames.
+
+The script returns exit code 1 if any problematic patterns are found.
 
 == Requirements
 
-POSIX awk, sh, and utilities.
+POSIX `awk`, `sh`, and utilities.
 
 == TODO
 
