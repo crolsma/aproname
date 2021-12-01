@@ -10,12 +10,13 @@ Restrictions include:
 . MS-DOS and Microsoft Windows restrictions,
 . additional restrictions to avoid common usability problems.
 
-Invalid pathnames are printed to STDOUT with a summary of problems.
+Invalid pathnames are printed to STDOUT with a summary of problems for each one.
 
 == Usage
 
 `aproname [file...]`
 
+As an `awk` script,
 `aproname` expects input in one of two ways:
 
 . from STDIN,
@@ -24,7 +25,7 @@ Invalid pathnames are printed to STDOUT with a summary of problems.
   and where each file is expected to contain pathnames.
   The pathname of the argument itself is not checked for invalid patterns.
 
-To properly check the pathnames in a directory tree:
+To check the pathnames in a directory tree:
 
 `find path | aproname`
 
