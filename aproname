@@ -19,15 +19,23 @@ BEGIN {
 }
 
 {
-  if (NF > 1 && bytes($0) - bytes($NF) > 156) {
+  length_t = bytes($0)
+  length_l = bytes($NF)
+
+  if (NF > 1 && length_t - length_l > 156) {
     flag[156] = len[156]
   }
 
-  for (c = 1; c <= NF; c++) {
-    if (bytes($c) > 100) {
-      flag[100] = len[100]
+  if (length_t > 100) {
+    for (c = 1; c <= NF; c++) {
+      if (bytes($c) > 100) {
+        flag[100] = len[100]
+        break
+      }
     }
+  }
 
+  for (c = 1; c <= NF; c++) {
     for (p in patt) {
       if (tolower($c) ~ p) {
         flag[p] = patt[p]
