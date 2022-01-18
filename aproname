@@ -53,8 +53,8 @@ END {
 }
 
 function bytes(str, _cmd, _num) {
-  gsub(/'/, 1, str)
-  _cmd = "printf %s '" str "' | wc -c"
+  gsub(/"/, "\\&", str)
+  _cmd = "printf %s \"" str "\" | wc -c"
   _cmd | getline _num
   close(_cmd)
   return _num
