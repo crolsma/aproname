@@ -37,8 +37,3 @@ The script returns exit code 1 if any problematic patterns are found.
 == Requirements
 
 POSIX `awk`, `sh`, and utilities.
-
-== TODO
-
-The `bytes` function is very slow due to calling external utilities.
-Replacing it with something better would speed up the script significantly.
