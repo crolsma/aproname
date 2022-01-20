@@ -21,7 +21,7 @@ BEGIN {
 {
   length_t = bytes($0)
  
-  if (NF > 1 && length_t - bytes($NF) > 156) {
+  if (length_t > 156 && NF > 1 && length_t - bytes($NF) > 156) {
     flag[156] = len[156]
   }
 
