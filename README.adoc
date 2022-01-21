@@ -33,7 +33,3 @@ To check the pathnames in a directory tree:
 Such a pathname will be incorrectly treated as two or more pathnames.
 
 The script returns exit code 1 if any problematic patterns are found.
-
-== Requirements
-
-POSIX `awk`, `sh`, and utilities.
