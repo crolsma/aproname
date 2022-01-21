@@ -6,8 +6,15 @@
 # 4) additional restrictions to avoid common usability problems.
 
 BEGIN {
-  ENVIRON["LC_COLLATE"] = "C" # Effects of this are implementation-defined.
+  # Effects of setting environment variables within awk
+  # are implementation-defined.
+  # For portable use,
+  # set these values in the environment beforehand.
+  ENVIRON["LC_COLLATE"] = "C"
+  ENVIRON["LC_CTYPE"]   = "C"
+
   FS = "/"
+
   # array[pattern] = "error message prefix"
   len[156] = "Exceeds ustar prefix byte limit"
   len[100] = "Exceeds ustar filename byte limit"
@@ -19,14 +26,12 @@ BEGIN {
 }
 
 {
-  length_t = bytes($0)
- 
-  if (length_t > 156 && NF > 1 && length_t - bytes($NF) > 156) {
+  if (NF > 1 && length - length($NF) > 156) {
     flag[156] = len[156]
   }
 
   for (c = 1; c <= NF; c++) {
-    if (length_t > 100 && ! (100 in flag) && bytes($c) > 100) {
+    if (length($c) > 100) {
       flag[100] = len[100]
     }
 
@@ -52,12 +57,4 @@ BEGIN {
 
 END {
   exit result
-}
-
-function bytes(str, _cmd, _num) {
-  gsub(/"/, "\\&", str)
-  _cmd = "printf %s \"" str "\" | wc -c"
-  _cmd | getline _num
-  close(_cmd)
-  return _num
 }
