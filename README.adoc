@@ -29,7 +29,9 @@ To check the pathnames in a directory tree:
 
 `find path | aproname`
 
+The script returns exit code 1 if any problematic patterns are found.
+
+== Bugs
+
 `aproname` can not properly handle embedded newlines.
 Such a pathname will be incorrectly treated as two or more pathnames.
-
-The script returns exit code 1 if any problematic patterns are found.
