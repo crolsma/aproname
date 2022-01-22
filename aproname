@@ -21,7 +21,7 @@ BEGIN {
 }
 
 {
-  if (NF > 1 && length - length($NF) > 156) {
+  if (NF > 1 && length($0) - length($NF) > 156) {
     flag[156] = len[156]
   }
 
