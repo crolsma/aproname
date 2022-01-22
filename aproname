@@ -6,13 +6,8 @@
 # 4) additional restrictions to avoid common usability problems.
 
 BEGIN {
-  # Effects of setting environment variables within awk
-  # are implementation-defined.
-  # For portable use,
-  # set these values in the environment beforehand.
-  ENVIRON["LC_COLLATE"] = "C"
-  ENVIRON["LC_CTYPE"]   = "C"
-
+  # Assigning environment variables within awk is implementation-defined.
+  ENVIRON["LC_COLLATE"] = ENVIRON["LC_CTYPE"] = "C"
   FS = "/"
 
   # array[pattern] = "error message prefix"
