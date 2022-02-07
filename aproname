@@ -25,7 +25,7 @@ BEGIN {
     flag[156] = len[156]
   }
 
-  for (c = 1; c <= NF; c++) {
+  for (c = 1; c <= NF; ++c) {
     if (length($c) > 100) {
       flag[100] = len[100]
     }
