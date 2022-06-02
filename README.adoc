@@ -8,7 +8,7 @@ Restrictions include:
 . POSIX Portable Filename Character Set
 . Ustar pathname length restrictions
 . MS-DOS and Microsoft Windows restrictions
-. additional restrictions to avoid common usability problems
+. Additional restrictions to avoid common usability problems.
 
 Invalid pathnames are printed to STDOUT with a summary of problems for each one.
 
@@ -19,8 +19,8 @@ Invalid pathnames are printed to STDOUT with a summary of problems for each one.
 As an awk script,
 aproname expects input in one of two ways:
 
-. from STDIN,
-. as arguments,
+. From STDIN
+. As arguments,
   where each argument is treated as a file,
   and where each file is expected to contain pathnames.
   The pathname of the argument itself is not checked for invalid patterns.
