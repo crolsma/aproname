@@ -5,36 +5,29 @@ accounting for both unix-like and Microsoft OSes.
 
 Restrictions include:
 
-. POSIX Portable Filename Character Set
-. Ustar pathname length restrictions
-. MS-DOS and Microsoft Windows restrictions
-. Additional restrictions to avoid common usability problems.
+. POSIX Portable Filename Character Set,
+. ustar pathname length restrictions,
+. MS-DOS and Microsoft Windows restrictions,
+. additional restrictions to avoid common usability problems.
 
-Invalid pathnames are printed to STDOUT with a summary of problems for each one.
+Invalid pathnames are printed to STDOUT with a summary of problems for each name.
 
 == Usage
 
-`aproname [file...]`
+Check pathnames given as arguments:
 
-As an awk script,
-aproname expects input in one of two ways:
+`aproname pathname...`
 
-. From STDIN
-. As arguments,
-  where each argument is treated as a file,
-  and where each file is expected to contain pathnames.
-  The pathname of the argument itself is not checked for invalid patterns.
+Check the pathnames in a directory tree:
 
-To check the pathnames in a directory tree:
+`find path... -exec aproname {} +`
 
-`find path | aproname`
+Check pathnames from STDIN:
+
+`xargs -I {} aproname {}`
 
 The script returns exit code 1 if any problematic patterns are found.
-
-== Bugs
-
-Aproname can not properly handle embedded newlines.
-Such a pathname will be incorrectly treated as two or more pathnames.
+Otherwise it returns exit code 0.
 
 == References
 

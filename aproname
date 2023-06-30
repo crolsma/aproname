@@ -1,55 +1,82 @@
-#!/bin/awk -f
-# Detects invalid pathname lengths and patterns based on restrictions from:
-# 1) POSIX Portable Filename Character Set,
-# 2) ustar pathname length restrictions,
-# 3) MS-DOS and Microsoft Windows restrictions,
-# 4) additional restrictions to avoid common usability problems.
+#! /bin/sh
 
-BEGIN {
-  # Assigning environment variables within awk is implementation-defined.
-  ENVIRON["LC_COLLATE"] = ENVIRON["LC_CTYPE"] = "C"
-  FS = "/"
+#### Detects invalid pathname lengths and patterns based on restrictions from:
+#### POSIX Portable Filename Character Set,
+#### ustar pathname length restrictions,
+#### MS-DOS and Microsoft Windows restrictions,
+#### and additional restrictions to avoid common usability problems.
 
-  # array[pattern] = "error message prefix"
-  len[156] = "Exceeds ustar prefix byte limit"
-  len[100] = "Exceeds ustar filename byte limit"
-  patt["[^0-9A-Za-z._-]"] = "Contains non-portable character"
-  patt["^(aux|con|nul|prn|(com|lpt)[0-9])([.].*)?$"] = "Reserved MS-DOS name"
-  patt["^[.]lock$|_vti_|^desktop[.]ini$"] = "Restricted Microsoft OneDrive name"
-  patt["^-|[.]$"] = "Invalid leading/trailing character"
-  patt["^[^0-9A-Za-z]+$"] = "Only contains"
-}
+## Only include ASCII characters in ranges,
+## and count length by bytes.
+export LC_COLLATE=C LC_CTYPE=C
 
-{
-  if (NF > 1 && length($0) - length($NF) > 156) {
-    flag[156] = len[156]
-  }
+awk '
+	function alength(arr,    i, j)
+	{
+		i = 0
+		for (j in arr) {
+			++i
+		}
+		return i
+	}
 
-  for (c = 1; c <= NF; ++c) {
-    if (length($c) > 100) {
-      flag[100] = len[100]
-    }
+	function adelete(arr,    i)
+	{
+		for (i in arr) {
+			delete arr[i]
+		}
+	}
 
-    for (p in patt) {
-      if (tolower($c) ~ p) {
-        flag[p] = patt[p]
-      }
-    }
-  }
+	BEGIN {
+		FS = "/"
 
-  for (f in flag) {
-    result = 1
-    print
-    break
-  }
+		## array[criteria] = "error message prefix"
+		byte[byte_pref = 156] = "Exceeds ustar prefix byte limit"
+		byte[byte_name = 100] = "Exceeds ustar filename byte limit"
+		patt["[^0-9A-Za-z._-]"] = "Contains non-portable character"
+		patt["^(aux|con|nul|prn|(com|lpt)[0-9])([.].*)?$"] = \
+			"Reserved MS-DOS name"
+		patt["^[.]lock$|_vti_|^desktop[.]ini$"] = \
+			"Restricted Microsoft OneDrive name"
+		patt["^-|[.]$"] = "Invalid leading/trailing character"
+		patt["^[^0-9A-Za-z]+$"] = "Only contains"
 
-  for (f in flag) {
-    printf "\033[31m  %s: '%s'\033[m\n", flag[f], f
-  }
+		form = "%s: %s: %s\n"
+		sort = "sort"
+		stat = 0
 
-  split("", flag) # Portable way to delete an array.
-}
+		for (i = 1; i < ARGC; ++i) {
+			path = ARGV[i]; n = split(path, comp)
 
-END {
-  exit result
-}
+			if (n > 1 && length(path) - length(comp[n]) > byte_pref) {
+				flag[byte_pref] = byte[byte_pref]
+			}
+
+			for (j = 1; j <= n; ++j) {
+				if (comp[j] != "") {
+					if (length(comp[j]) > byte_name) {
+						flag[byte_name] = byte[byte_name]
+					}
+
+					for (k in patt) {
+						if (tolower(comp[j]) ~ k) {
+							flag[k] = patt[k]
+						}
+					}
+				}
+			}
+
+			if (alength(flag) > 0) {
+				stat = 1
+
+				for (j in flag) {
+					printf form, path, flag[j], j | sort
+				}
+
+				close(sort); adelete(flag)
+			}
+		}
+
+		exit stat
+	}
+' "$@"
