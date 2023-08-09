@@ -1,4 +1,6 @@
 = aproname
+:nofooter:
+:reproducible:
 
 Detects problematic pathname patterns,
 accounting for both unix-like and Microsoft OSes.
@@ -24,6 +26,7 @@ Check the pathnames in a directory tree:
 
 Check pathnames from STDIN:
 
+[%hardbreaks]
 `... | xargs -I {} aproname {}`
 `... | xargs -0 aproname`
 
