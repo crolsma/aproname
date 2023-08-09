@@ -24,7 +24,8 @@ Check the pathnames in a directory tree:
 
 Check pathnames from STDIN:
 
-`xargs -I {} aproname {}`
+`... | xargs -I {} aproname {}`
+`... | xargs -0 aproname`
 
 The script returns exit code 1 if any problematic patterns are found.
 Otherwise it returns exit code 0.
@@ -32,8 +33,8 @@ Otherwise it returns exit code 0.
 == References
 
 * https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/basedefs/V1_chap03.html#tag_03_282[POSIX Portable Filename Character Set]
-* https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/utilities/pax.html#tag_20_92_13_06[Ustar format]
-* https://mgorny.pl/articles/portability-of-tar-features.html[Ustar portability]
+* https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/utilities/pax.html#tag_20_92_13_06[ustar format]
+* https://mgorny.pl/articles/portability-of-tar-features.html[ustar portability]
 * https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file[Microsoft Windows filenames]
 * https://support.microsoft.com/en-us/office/restrictions-and-limitations-in-onedrive-and-sharepoint-64883a5d-228e-48f5-b3d2-eb39e07630fa[Microsoft OneDrive filenames]
 * https://dwheeler.com/essays/fixing-unix-linux-filenames.html[Commentary on safe filenames]

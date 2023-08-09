@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/sh -eu
 
 #### Detects invalid pathname lengths and patterns based on restrictions from:
 #### POSIX Portable Filename Character Set,
@@ -6,9 +6,51 @@
 #### MS-DOS and Microsoft Windows restrictions,
 #### and additional restrictions to avoid common usability problems.
 
-## Only include ASCII characters in ranges,
+usage()
+{
+	cat <<- EOF >&2
+		synopsis: ${0##*/} [-h] [pathname...]
+		descript: detect invalid pathnames
+		-h:       print this message and exit
+	EOF
+}
+
+error()
+{
+	printf '%s: %s\n' "${0##*/}" "$*" >&2
+}
+
+while getopts :h opt
+do
+	case $opt in
+		(h)
+			usage
+			exit
+			;;
+		(*)
+			error "invalid option: -$OPTARG"
+			usage
+			exit 1
+			;;
+	esac
+done
+shift "$((OPTIND - 1))"
+
+## Propagate the value of LC_ALL to the environment
+## without affecting the values of LC_COLLATE or LC_CTYPE.
+if test "${LC_ALL-}"
+then
+	for i in LC_MESSAGES LC_MONETARY LC_NUMERIC LC_TIME 
+	do
+		export "$i=$LC_ALL"
+	done
+	unset LC_ALL
+fi
+
+## Only include ASCII characters in bracket expressions,
 ## and count length by bytes.
-export LC_COLLATE=C LC_CTYPE=C
+export LC_COLLATE=C
+export LC_CTYPE=C
 
 awk '
 	function alength(arr,    i, j)
@@ -30,23 +72,24 @@ awk '
 	BEGIN {
 		FS = "/"
 
-		## array[criteria] = "error message prefix"
-		byte[byte_pref = 156] = "Exceeds ustar prefix byte limit"
-		byte[byte_name = 100] = "Exceeds ustar filename byte limit"
+		## array[criteria]      = "error message prefix"
+		byte[byte_pref = 156]   = "Exceeds ustar prefix byte limit"
+		byte[byte_name = 100]   = "Exceeds ustar filename byte limit"
 		patt["[^0-9A-Za-z._-]"] = "Contains non-portable character"
-		patt["^(aux|con|nul|prn|(com|lpt)[0-9])([.].*)?$"] = \
-			"Reserved MS-DOS name"
-		patt["^[.]lock$|_vti_|^desktop[.]ini$"] = \
-			"Restricted Microsoft OneDrive name"
-		patt["^-|[.]$"] = "Invalid leading/trailing character"
+		patt["^-|[.]$"]         = "Invalid leading/trailing character"
 		patt["^[^0-9A-Za-z]+$"] = "Only contains"
+		patt["^(aux|con|nul|prn|(com|lpt)[0-9])([.].*)?$"] = \
+		                          "Reserved MS-DOS name"
+		patt["^[.]lock$|_vti_|^desktop[.]ini$"] = \
+		                          "Restricted Microsoft OneDrive name"
 
 		form = "%s: %s: %s\n"
 		sort = "sort"
 		stat = 0
 
 		for (i = 1; i < ARGC; ++i) {
-			path = ARGV[i]; n = split(path, comp)
+			path = ARGV[i]
+			n    = split(path, comp)
 
 			if (n > 1 && length(path) - length(comp[n]) > byte_pref) {
 				flag[byte_pref] = byte[byte_pref]
@@ -73,7 +116,8 @@ awk '
 					printf form, path, flag[j], j | sort
 				}
 
-				close(sort); adelete(flag)
+				close(sort)
+				adelete(flag)
 			}
 		}
 
