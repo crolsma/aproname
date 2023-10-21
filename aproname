@@ -1,10 +1,12 @@
-#! /bin/sh -eu
+#! /bin/sh
 
 #### Detects invalid pathname lengths and patterns based on restrictions from:
 #### POSIX Portable Filename Character Set,
 #### ustar pathname length restrictions,
 #### MS-DOS and Microsoft Windows restrictions,
 #### and additional restrictions to avoid common usability problems.
+
+set -eu
 
 usage()
 {
