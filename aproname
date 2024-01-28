@@ -1,10 +1,7 @@
 #!/bin/sh
 
-# Detects invalid pathname lengths and patterns based on restrictions from:
-# POSIX Portable Filename Character Set,
-# ustar pathname length restrictions,
-# MS-DOS and Microsoft Windows restrictions,
-# and additional restrictions to avoid common usability problems.
+# Detect invalid and problematic pathname lengths and patterns,
+# accounting for both unix-like and Microsoft OSes.
 
 set -eu
 
@@ -15,7 +12,7 @@ export LC_CTYPE=C
 
 # Propagate the value of LC_ALL to the environment
 # without affecting the values of LC_COLLATE or LC_CTYPE.
-if test "${LC_ALL-}"
+if test -n "${LC_ALL-}"
 then
 	for i in LC_MESSAGES LC_MONETARY LC_NUMERIC LC_TIME 
 	do
@@ -50,15 +47,15 @@ awk '
 		filter = "sort"
 
 		# array[criteria] = "error message prefix"
-		byte[byte_pref = 156] = "Exceeds ustar prefix byte limit"
-		byte[byte_name = 100] = "Exceeds ustar filename byte limit"
-		patt["[^0-9A-Za-z._-]"] = "Contains non-portable character"
-		patt["^-|[.]$"] = "Invalid leading/trailing character"
-		patt["^[^0-9A-Za-z]+$"] = "Only contains"
+		byte[byte_pref = 156] = "exceeds ustar prefix byte limit"
+		byte[byte_name = 100] = "exceeds ustar filename byte limit"
+		patt["[^0-9A-Za-z._-]"] = "contains non-portable character"
+		patt["^-|[.]$"] = "invalid leading/trailing character"
+		patt["^[^0-9A-Za-z]+$"] = "only contains"
 		patt["^(aux|con|nul|prn|(com|lpt)[0-9])([.].*)?$"] = \
-			"Reserved MS-DOS name"
+			"reserved MS-DOS name"
 		patt["^[.]lock$|_vti_|^desktop[.]ini$"] = \
-			"Restricted Microsoft OneDrive name"
+			"restricted Microsoft OneDrive name"
 
 		for (i = 1; i < ARGC; ++i) {
 			path = ARGV[i]

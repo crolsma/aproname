@@ -2,7 +2,9 @@
 :nofooter:
 :reproducible:
 
-Detects problematic pathname patterns,
+== Summary
+
+Detect invalid and problematic pathname lengths and patterns,
 accounting for both unix-like and Microsoft OSes.
 
 Restrictions include:
