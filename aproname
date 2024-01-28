@@ -8,36 +8,6 @@
 
 set -eu
 
-usage()
-{
-	cat <<- EOF >&2
-		synopsis: ${0##*/} [-h] [pathname...]
-		descript: detect invalid pathnames
-		-h:       print this message and exit
-	EOF
-}
-
-error()
-{
-	printf '%s: %s\n' "${0##*/}" "$*" >&2
-}
-
-while getopts :h opt
-do
-	case $opt in
-		(h)
-			usage
-			exit
-			;;
-		(*)
-			error "invalid option: -$OPTARG"
-			usage
-			exit 1
-			;;
-	esac
-done
-shift "$((OPTIND - 1))"
-
 # Propagate the value of LC_ALL to the environment
 # without affecting the values of LC_COLLATE or LC_CTYPE.
 if test "${LC_ALL-}"
