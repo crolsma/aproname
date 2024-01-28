@@ -8,6 +8,11 @@
 
 set -eu
 
+# Only include ASCII characters in bracket expressions,
+# and count length by bytes rather than characters.
+export LC_COLLATE=C
+export LC_CTYPE=C
+
 # Propagate the value of LC_ALL to the environment
 # without affecting the values of LC_COLLATE or LC_CTYPE.
 if test "${LC_ALL-}"
@@ -18,11 +23,6 @@ then
 	done
 	unset LC_ALL
 fi
-
-# Only include ASCII characters in bracket expressions,
-# and count length by bytes.
-export LC_COLLATE=C
-export LC_CTYPE=C
 
 awk '
 	function alength(arr,    i, j)
@@ -43,6 +43,9 @@ awk '
 
 	BEGIN {
 		FS = "/"
+		form = "%s: %s: %s\n"
+		sort = "sort"
+		stat = 0
 
 		# array[criteria] = "error message prefix"
 		byte[byte_pref = 156] = "Exceeds ustar prefix byte limit"
@@ -54,10 +57,6 @@ awk '
 			"Reserved MS-DOS name"
 		patt["^[.]lock$|_vti_|^desktop[.]ini$"] = \
 			"Restricted Microsoft OneDrive name"
-
-		form = "%s: %s: %s\n"
-		sort = "sort"
-		stat = 0
 
 		for (i = 1; i < ARGC; ++i) {
 			path = ARGV[i]
