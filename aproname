@@ -43,9 +43,11 @@ awk '
 
 	BEGIN {
 		FS = "/"
+		EXIT_SUCCESS = 0
+		EXIT_FAILURE = 1
+		status = EXIT_SUCCESS
 		format = "%s: %s: %s\n"
 		filter = "sort"
-		status = 0
 
 		# array[criteria] = "error message prefix"
 		byte[byte_pref = 156] = "Exceeds ustar prefix byte limit"
@@ -80,7 +82,7 @@ awk '
 			}
 
 			if (alength(flag) > 0) {
-				status = 1
+				status = EXIT_FAILURE
 				for (j in flag) {
 					printf format, path, flag[j], j | filter
 				}
