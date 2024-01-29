@@ -55,7 +55,7 @@ awk '
 						flag[byte_name] = byte[byte_name]
 					}
 					for (p in patt) {
-						if (tolower(comp[j]) ~ p) {
+						if (tolower(comp[c]) ~ p) {
 							flag[p] = patt[p]
 						}
 					}
