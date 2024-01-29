@@ -1,6 +1,4 @@
 = aproname
-:nofooter:
-:reproducible:
 
 == Summary
 
@@ -28,9 +26,11 @@ Check the pathnames in a directory tree:
 
 Check pathnames from STDIN:
 
-[%hardbreaks]
 `... | xargs -I {} aproname {}`
+
 `... | xargs -0 aproname`
+
+== Exit Status
 
 The script returns exit code 1 if any problematic patterns are found.
 Otherwise it returns exit code 0.
