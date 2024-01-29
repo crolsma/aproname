@@ -49,23 +49,23 @@ awk '
 				flag[byte_pref] = byte[byte_pref]
 			}
 
-			for (j = 1; j <= n; ++j) {
-				if (comp[j] != "") {
-					if (length(comp[j]) > byte_name) {
+			for (c = 1; c <= n; ++c) {
+				if (comp[c] != "") {
+					if (length(comp[c]) > byte_name) {
 						flag[byte_name] = byte[byte_name]
 					}
-					for (k in patt) {
-						if (tolower(comp[j]) ~ k) {
-							flag[k] = patt[k]
+					for (p in patt) {
+						if (tolower(comp[j]) ~ p) {
+							flag[p] = patt[p]
 						}
 					}
 				}
 			}
 
-			if (alength(flag) > 0) {
+			if (alength(flag)) {
 				status = EXIT_FAILURE
-				for (j in flag) {
-					printf format, path, flag[j], j | filter
+				for (f in flag) {
+					printf format, path, flag[f], f | filter
 				}
 				close(filter)
 				adelete(flag)
