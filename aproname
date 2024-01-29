@@ -22,22 +22,6 @@ then
 fi
 
 awk '
-	function alength(arr,    i, j)
-	{
-		i = 0
-		for (j in arr) {
-			++i
-		}
-		return i
-	}
-
-	function adelete(arr,    i)
-	{
-		for (i in arr) {
-			delete arr[i]
-		}
-	}
-
 	BEGIN {
 		FS = "/"
 		EXIT_SUCCESS = 0
@@ -89,5 +73,21 @@ awk '
 		}
 
 		exit status
+	}
+
+	function alength(arr,    i, j)
+	{
+		i = 0
+		for (j in arr) {
+			++i
+		}
+		return i
+	}
+
+	function adelete(arr,    i)
+	{
+		for (i in arr) {
+			delete arr[i]
+		}
 	}
 ' "$@"
