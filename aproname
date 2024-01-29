@@ -41,6 +41,11 @@ awk '
 		patt["^[.]lock$|_vti_|^desktop[.]ini$"] = \
 			"restricted Microsoft OneDrive name"
 
+		# Special pathname components to ignore.
+		++spec[""]
+		++spec["."]
+		++spec[".."]
+
 		for (i = 1; i < ARGC; ++i) {
 			path = ARGV[i]
 			n = split(path, comp)
@@ -50,7 +55,7 @@ awk '
 			}
 
 			for (c = 1; c <= n; ++c) {
-				if (comp[c] != "") {
+				if (!(comp[c] in spec)) {
 					if (length(comp[c]) > byte_name) {
 						flag[byte_name] = byte[byte_name]
 					}
