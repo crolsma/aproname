@@ -31,9 +31,15 @@ awk '
 		# array[criteria] = "error message prefix"
 		byte[byte_pref = 156] = "exceeds ustar prefix byte limit"
 		byte[byte_name = 100] = "exceeds ustar filename byte limit"
-		patt["[^0-9A-Za-z._-]"] = "contains non-portable character"
-		patt["^-|[.]$"] = "invalid leading/trailing character"
-		patt["^[^0-9A-Za-z]+$"] = "only contains"
+		patt["[^0-9A-Za-z._-]"] = \
+			"contains character not from the " \
+			"POSIX Portable Filename Character Set"
+		patt["^-"] = \
+			"contains problematic leading character on " \
+			"unix-like OSes"
+		patt["[ .]$"] = \
+			"contains disallowed trailing character on " \
+			"Microsoft OSes"
 		patt["^(aux|con|nul|prn|(com|lpt)[0-9])([.].*)?$"] = \
 			"reserved MS-DOS name"
 		patt["^[.]lock$|_vti_|^desktop[.]ini$"] = \
