@@ -10,7 +10,7 @@ export LC_CTYPE=C
 
 # Propagate the value of LC_ALL to the environment
 # without affecting the values of LC_COLLATE or LC_CTYPE.
-if test -n "${LC_ALL-}"
+if [ "$LC_ALL" ]
 then
 	for i in LC_MESSAGES LC_MONETARY LC_NUMERIC LC_TIME 
 	do
@@ -25,7 +25,7 @@ awk '
 		EXIT_SUCCESS = 0
 		EXIT_FAILURE = 1
 		status = EXIT_SUCCESS
-		format = "%s: %s: %s\n"
+		format = "%s: %s: \47%s\47\n"
 		filter = "sort"
 
 		# array[criteria] = "error message prefix"
@@ -80,11 +80,10 @@ awk '
 
 	function alength(arr,    i, j)
 	{
-		i = 0
-		for (j in arr) {
-			++i
+		for (i in arr) {
+			++j
 		}
-		return i
+		return j
 	}
 
 	function adelete(arr,    i)
