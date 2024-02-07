@@ -12,7 +12,7 @@ export LC_CTYPE=C
 # without affecting the values of LC_COLLATE or LC_CTYPE.
 if [ "$LC_ALL" ]
 then
-	for i in LC_MESSAGES LC_MONETARY LC_NUMERIC LC_TIME 
+	for i in LC_MESSAGES LC_MONETARY LC_NUMERIC LC_TIME
 	do
 		export "$i=$LC_ALL"
 	done
