@@ -3,8 +3,6 @@
 # Detect invalid and problematic pathname lengths and patterns,
 # accounting for both unix-like and Microsoft OSes.
 
-set -eu
-
 # Only include ASCII characters in bracket expressions,
 # and count length by bytes rather than characters.
 export LC_COLLATE=C
