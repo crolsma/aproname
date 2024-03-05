@@ -22,9 +22,7 @@ fi
 awk '
 	BEGIN {
 		FS = "/"
-		EXIT_SUCCESS = 0
-		EXIT_FAILURE = 1
-		status = EXIT_SUCCESS
+		status = 0
 		format = "%s: %s: \47%s\47\n"
 		filter = "sort"
 
@@ -71,31 +69,14 @@ awk '
 				}
 			}
 
-			if (alength(flag)) {
-				status = EXIT_FAILURE
-				for (f in flag) {
-					printf format, path, flag[f], f | filter
-				}
-				close(filter)
-				adelete(flag)
+			for (f in flag) {
+				printf format, path, flag[f], f | filter
+				status = 1
 			}
+			split("", flag)
+			close(cmd)
 		}
 
 		exit status
-	}
-
-	function alength(arr,    i, j)
-	{
-		for (i in arr) {
-			++j
-		}
-		return j
-	}
-
-	function adelete(arr,    i)
-	{
-		for (i in arr) {
-			delete arr[i]
-		}
 	}
 ' "$@"
