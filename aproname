@@ -74,7 +74,7 @@ awk '
 				status = 1
 			}
 			split("", flag)
-			close(cmd)
+			close(filter)
 		}
 
 		exit status
