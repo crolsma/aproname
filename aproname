@@ -26,7 +26,6 @@ awk '
 		format = "%s: %s: \47%s\47\n"
 		filter = "sort"
 
-		# array[criteria] = "error message prefix"
 		byte[byte_pref = 156] = "exceeds ustar prefix byte limit"
 		byte[byte_name = 100] = "exceeds ustar filename byte limit"
 		patt["[^0-9A-Za-z._-]"] = \
@@ -43,10 +42,9 @@ awk '
 		patt["^[.]lock$|_vti_|^desktop[.]ini$"] = \
 			"restricted Microsoft OneDrive name"
 
-		# Special pathname components to ignore.
-		++spec[""]
-		++spec["."]
-		++spec[".."]
+		++ignore[""]
+		++ignore["."]
+		++ignore[".."]
 
 		for (i = 1; i < ARGC; ++i) {
 			path = ARGV[i]
@@ -57,14 +55,15 @@ awk '
 			}
 
 			for (c = 1; c <= n; ++c) {
-				if (!(comp[c] in spec)) {
-					if (length(comp[c]) > byte_name) {
-						flag[byte_name] = byte[byte_name]
-					}
-					for (p in patt) {
-						if (tolower(comp[c]) ~ p) {
-							flag[p] = patt[p]
-						}
+				if (comp[c] in ignore) {
+					continue
+				}
+				if (length(comp[c]) > byte_name) {
+					flag[byte_name] = byte[byte_name]
+				}
+				for (p in patt) {
+					if (tolower(comp[c]) ~ p) {
+						flag[p] = patt[p]
 					}
 				}
 			}
