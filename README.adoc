@@ -38,7 +38,7 @@ Otherwise it returns exit code 0.
 == References
 
 * https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/basedefs/V1_chap03.html#tag_03_281[Portable Filename]
-* https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/basedefs/V1_chap03.html#tag_03_282[POSIX Portable Filename Character Set]
+* https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/basedefs/V1_chap03.html#tag_03_282[Portable Filename Character Set]
 * https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/basedefs/V1_chap03.html#tag_03_271[Pathname]
 * https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/basedefs/V1_chap04.html#tag_04_13[Pathname Resolution]
 * https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/utilities/pax.html#tag_20_92_13_06[ustar format]
