@@ -10,7 +10,7 @@ export LC_CTYPE=C
 
 # Propagate the value of LC_ALL to the environment
 # without affecting the values of LC_COLLATE or LC_CTYPE.
-if [ "$LC_ALL" ]
+if test -n "$LC_ALL"
 then
 	for i in LC_MESSAGES LC_MONETARY LC_NUMERIC LC_TIME
 	do
@@ -22,58 +22,65 @@ fi
 awk '
 	BEGIN {
 		FS = "/"
+
 		status = 0
 		format = "%s: %s: \47%s\47\n"
 		filter = "sort"
 
-		byte[byte_pref = 156] = "exceeds ustar prefix byte limit"
-		byte[byte_name = 100] = "exceeds ustar filename byte limit"
-		patt["[^0-9A-Za-z._-]"] = \
-			"contains character not from the " \
-			"POSIX Portable Filename Character Set"
-		patt["^-"] = \
-			"contains problematic leading character on " \
-			"unix-like OSes"
-		patt["[ .]$"] = \
-			"contains disallowed trailing character on " \
-			"Microsoft OSes"
-		patt["^(aux|con|nul|prn|(com|lpt)[0-9])([.].*)?$"] = \
-			"reserved MS-DOS name"
-		patt["^[.]lock$|_vti_|^desktop[.]ini$"] = \
-			"restricted Microsoft OneDrive name"
+		byte[byte_pref = 156] = \
+			"exceeds ustar prefix byte limit"
+		byte[byte_name = 100] = \
+			"exceeds ustar filename byte limit"
 
-		++ignore[""]
-		++ignore["."]
-		++ignore[".."]
+		spec[leading2slashes = "^//[^/]"] = \
+			"POSIX non-portable leading pathname pattern"
+
+		patt["[^0-9A-Za-z._-]"] = \
+			"POSIX non-portable character"
+		patt["^-"] = \
+			"POSIX non-portable leading filename character"
+		patt["[ .]$"] = \
+			"Microsoft non-portable trailing filename character"
+		patt["^(aux|con|nul|prn|(com|lpt)[0-9])([.].*)?$"] = \
+			"reserved MS-DOS filename"
+		patt["^[.]lock$|_vti_|^desktop[.]ini$"] = \
+			"restricted Microsoft OneDrive filename"
+
+		++omit[""]
+		++omit["."]
+		++omit[".."]
 
 		for (i = 1; i < ARGC; ++i) {
-			path = ARGV[i]
-			n = split(path, comp)
+			$0 = ARGV[i]
 
-			if (n > 1 && length(path) - length(comp[n]) > byte_pref) {
+			if (NF > 1 && length() - length($NF) > byte_pref) {
 				flag[byte_pref] = byte[byte_pref]
 			}
+			if ($0 ~ leading2slashes) {
+				flag[leading2slashes] = spec[leading2slashes]
+			}
 
-			for (c = 1; c <= n; ++c) {
-				if (comp[c] in ignore) {
+			for (j = 1; j <= NF; ++j) {
+				if ($j in omit) {
 					continue
 				}
-				if (length(comp[c]) > byte_name) {
+				if (length($j) > byte_name) {
 					flag[byte_name] = byte[byte_name]
 				}
-				for (p in patt) {
-					if (tolower(comp[c]) ~ p) {
-						flag[p] = patt[p]
+				for (k in patt) {
+					if (tolower($j) ~ k) {
+						flag[k] = patt[k]
 					}
 				}
 			}
 
-			for (f in flag) {
-				printf format, path, flag[f], f | filter
+			for (j in flag) {
+				printf format, $0, flag[j], j | filter
 				status = 1
 			}
-			split("", flag)
+
 			close(filter)
+			split("", flag)
 		}
 
 		exit status
