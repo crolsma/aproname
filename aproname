@@ -1,0 +1,70 @@
+#!/bin/sh
+# Detect invalid and problematic pathnames.
+
+# Use the C locale to include only ASCII characters in bracket expressions
+# and to treat each byte as a character for counting.
+LC_ALL=C awk '
+	BEGIN {
+		EXIT_FAILURE = 1
+		EXIT_SUCCESS = 0
+		status = EXIT_SUCCESS
+		FS = "/"
+		OFS = ":"
+
+		spec[bytet = 0] = "Zero-length pathname"
+		spec[bytep = 156] = "POSIX ustar prefix byte limit"
+		spec[bytef = 100] = "POSIX ustar filename byte limit"
+		spec[slash = "^//([^/]|$)"] = "POSIX non-portable pathname pattern"
+		patt["[^0-9A-Za-z._-]"] = "POSIX non-portable character"
+		patt["^-"] = "POSIX non-portable leading character"
+		patt["[ .]$"] = "Microsoft non-portable trailing character"
+		patt["^(aux|con|nul|prn|(com|lpt)[0-9])(\\..*)?$"] = \
+			"Microsoft DOS reserved filename"
+		patt["^\\.lock$|_vti_|^desktop\\.ini$"] = \
+			"Microsoft OneDrive restricted filename"
+		dotdot = "^\\.\\.?$"
+
+		for (i = 1; i < ARGC; ++i) {
+			$0 = ARGV[i]
+			lt = length($0)
+
+			if (!lt) {
+				print $0, spec[bytet], bytet
+				status = EXIT_FAILURE
+				continue
+			}
+			if (NF > 1 && lt - length($NF) > bytep) {
+				print $0, spec[bytep], bytep
+				status = EXIT_FAILURE
+			}
+			if ($0 ~ slash) {
+				print $0, spec[slash], slash
+				status = EXIT_FAILURE
+			}
+
+			for (j = 1; j <= NF; ++j) {
+				lf = length($j)
+
+				if (!lf || $j ~ dotdot) {
+					continue
+				}
+				if (lf > bytef && !seen[bytef]++) {
+					print $0, spec[bytef], bytef
+					status = EXIT_FAILURE
+				}
+
+				for (p in patt) {
+					if (tolower($j) ~ p && !seen[p]++) {
+						print $0, patt[p], p
+						status = EXIT_FAILURE
+					}
+				}
+			}
+			for (s in seen) {
+				delete seen[s]
+			}
+		}
+
+		exit status
+	}
+' "$@"
