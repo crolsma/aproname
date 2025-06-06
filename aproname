@@ -1,62 +1,73 @@
 #!/bin/sh
 # Detect invalid and problematic pathnames.
 
-# Use the C locale to include only ASCII characters in bracket expressions
-# and to treat each byte as a character for counting.
+# Include only ASCII characters in bracket expressions
+# and treat each byte as a character for counting.
 LC_ALL=C awk '
 	BEGIN {
-		EXIT_FAILURE = 1
-		EXIT_SUCCESS = 0
-		status = EXIT_SUCCESS
-		FS = "/"
-		OFS = ":"
+		spec[bytet = 0]             = "Zero-length pathname"
+		spec[bytep = 156]           = "POSIX ustar byte limit - prefix"
+		spec[bytef = 100]           = "POSIX ustar byte limit - filename"
+		spec[slash = "^//([^/]|$)"] = "POSIX non-portable pattern"
+		patt["^-"]                  = "POSIX non-portable pattern"
+		patt["[^0-9A-Za-z._-]"]     = "POSIX non-portable character"
+		patt["[ .]$"]               = "Microsoft non-portable pattern"
+		patt["^aux(\\.|$)"]         = "Microsoft DOS reserved filename"
+		patt["^con(\\.|$)"]         = "Microsoft DOS reserved filename"
+		patt["^nul(\\.|$)"]         = "Microsoft DOS reserved filename"
+		patt["^prn(\\.|$)"]         = "Microsoft DOS reserved filename"
+		patt["^com[0-9](\\.|$)"]    = "Microsoft DOS reserved filename"
+		patt["^lpt[0-9](\\.|$)"]    = "Microsoft DOS reserved filename"
+		patt["^\\.lock$"]           = "Microsoft OneDrive restricted filename"
+		patt["_vti_"]               = "Microsoft OneDrive restricted filename"
+		patt["^desktop\\.ini$"]     = "Microsoft OneDrive restricted filename"
+	}
 
-		spec[bytet = 0] = "Zero-length pathname"
-		spec[bytep = 156] = "POSIX ustar prefix byte limit"
-		spec[bytef = 100] = "POSIX ustar filename byte limit"
-		spec[slash = "^//([^/]|$)"] = "POSIX non-portable pathname pattern"
-		patt["[^0-9A-Za-z._-]"] = "POSIX non-portable character"
-		patt["^-"] = "POSIX non-portable leading character"
-		patt["[ .]$"] = "Microsoft non-portable trailing character"
-		patt["^(aux|con|nul|prn|(com|lpt)[0-9])(\\..*)?$"] = \
-			"Microsoft DOS reserved filename"
-		patt["^\\.lock$|_vti_|^desktop\\.ini$"] = \
-			"Microsoft OneDrive restricted filename"
-		dotdot = "^\\.\\.?$"
+	BEGIN {
+		FS  = "/"
+		OFS = ":"
 
 		for (i = 1; i < ARGC; ++i) {
 			$0 = ARGV[i]
 			lt = length($0)
+			lp = lt - length($NF)
 
 			if (!lt) {
 				print $0, spec[bytet], bytet
-				status = EXIT_FAILURE
+				status = 1
 				continue
 			}
-			if (NF > 1 && lt - length($NF) > bytep) {
+			if (lp > bytep) {
 				print $0, spec[bytep], bytep
-				status = EXIT_FAILURE
+				status = 1
 			}
 			if ($0 ~ slash) {
 				print $0, spec[slash], slash
-				status = EXIT_FAILURE
+				status = 1
 			}
 
 			for (j = 1; j <= NF; ++j) {
 				lf = length($j)
 
-				if (!lf || $j ~ dotdot) {
+				if (!lf) {
 					continue
 				}
-				if (lf > bytef && !seen[bytef]++) {
-					print $0, spec[bytef], bytef
-					status = EXIT_FAILURE
+				if ($j ~ /^\.\.?$/) {
+					continue
+				}
+				if (lf > bytef) {
+					if (!seen[bytef]++) {
+						print $0, spec[bytef], bytef
+						status = 1
+					}
 				}
 
 				for (p in patt) {
-					if (tolower($j) ~ p && !seen[p]++) {
-						print $0, patt[p], p
-						status = EXIT_FAILURE
+					if (tolower($j) ~ p) {
+						if (!seen[p]++) {
+							print $0, patt[p], p
+							status = 1
+						}
 					}
 				}
 			}
