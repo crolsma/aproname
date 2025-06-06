@@ -10,7 +10,7 @@ LC_ALL=C awk '
 		spec[bytef = 100]           = "POSIX ustar byte limit - filename"
 		spec[slash = "^//([^/]|$)"] = "POSIX non-portable pattern"
 		patt["^-"]                  = "POSIX non-portable pattern"
-		patt["[^0-9A-Za-z._-]"]     = "POSIX non-portable character"
+		patt["[^0-9A-Za-z._-]"]     = "POSIX non-portable pattern"
 		patt["[ .]$"]               = "Microsoft non-portable pattern"
 		patt["^aux(\\.|$)"]         = "Microsoft DOS reserved filename"
 		patt["^con(\\.|$)"]         = "Microsoft DOS reserved filename"
